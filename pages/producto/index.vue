@@ -10,33 +10,47 @@
 
     <div class="rown mt-2">
       <div class="col-sm-12">
-        <b-table responsive striped hover :fields="fields" :items="productos"/>
+        <b-table responsive striped hover :fields="fields" :items="productos" id="productos" :current-page="currentPage" :per-page="perPage"/>
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          aria-controls="productos"
+        ></b-pagination>
       </div>
     </div>
-  </div>
+  </div> 
 </template>
 
 <script>
 import { db } from "../../services/firebase";
 export default {
   asyncData() {
-   return db.collection("productos")
+    return db
+      .collection("productos")
       .get()
       .then(productosSnap => {
         let productos = [];
 
         productosSnap.forEach(value => {
-            productos.push(value.data())
-        })
-        return{
-            productos
-        }
-      })
+          productos.push(value.data());
+        });
+        return {
+          productos,
+          currentPage: 1,
+          perPage: 5
+        };
+      });
   },
   data() {
     return {
       fields: ["imagen", "nombre", "precio", "cantidad", "acciones"]
     };
+  },
+  computed: {
+    rows() {
+      return this.productos.length;
+    }
   }
 };
 </script>
