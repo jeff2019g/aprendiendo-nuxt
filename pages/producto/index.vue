@@ -22,7 +22,7 @@
         >
           <template slot="acciones" slot-scope="data">
             <b-button variant="success">Editar</b-button>
-            <b-button variant="danger" @click="eliminarProducto(data.item.id,data.index)">Eliminar</b-button>
+            <b-button variant="danger" @click="eliminarProducto(data.item.id)">Eliminar</b-button>
           </template>
         </b-table>
         <b-pagination
@@ -70,12 +70,16 @@ export default {
     }
   },
   methods: {
-    eliminarProducto(id, index) {
+    eliminarProducto(id) {
       db.collection("productos")
         .doc(id)
         .delete()
         .then(() => {
-          this.productos.splice(index,1);
+          let index;
+          this.productos.map((value, key) => {
+            if (value.id == id) index = key;
+          });
+          this.productos.splice(index, 1);
         });
     }
   }
