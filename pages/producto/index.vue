@@ -20,9 +20,9 @@
           :current-page="currentPage"
           :per-page="perPage"
         >
-          <template slot="acciones">
+          <template slot="acciones" slot-scope="data">
             <b-button variant="success">Editar</b-button>
-            <b-button variant="danger">Eliminar</b-button>
+            <b-button variant="danger" @click="eliminarProducto(data.item.id,data.index)">Eliminar</b-button>
           </template>
         </b-table>
         <b-pagination
@@ -47,7 +47,10 @@ export default {
         let productos = [];
 
         productosSnap.forEach(value => {
-          productos.push(value.data());
+          productos.push({
+            id: value.id,
+            ...value.data()
+          });
         });
         return {
           productos,
@@ -66,9 +69,14 @@ export default {
       return this.productos.length;
     }
   },
-  methods:{
-    aliminarProducto(){
-      db.collection('productos').delete(id)
+  methods: {
+    eliminarProducto(id, index) {
+      db.collection("productos")
+        .doc(id)
+        .delete()
+        .then(() => {
+          this.productos.splice(index,1);
+        });
     }
   }
 };
