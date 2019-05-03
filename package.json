@@ -4,7 +4,9 @@
   "description": "pagina web con nuxt",
   "main": "index.js",
   "scripts": {
-    "dev": "nuxt"
+    "dev": "nuxt",
+    "generate": "nuxt generate",
+    "deploy": "npm run generate && firebase deploy" 
   },
   "author": "Jeff",
   "license": "ISC",
