@@ -47,6 +47,9 @@
               id="cantidad"
             >
           </div>
+          <b-form-group label="Categoria" label-for="categoria">
+            <b-form-select id="categoria" v-model="form.categoria" :options="categorias"></b-form-select>
+          </b-form-group>
         </div>
       </div>
       <div class="row">
@@ -62,6 +65,17 @@
 import { db, storage } from "../../services/firebase";
 
 export default {
+  asyncData(){
+    return db.collection('categorias').get().then(categoriasSnap => {
+      let categorias =[];
+      categoriasSnap.forEach(value => {
+        categorias.push(value.data().nombre);
+      });
+      return{
+        categorias
+      }
+    });
+  },
   data() {
     return {
       form: {
@@ -76,10 +90,16 @@ export default {
   methods: {
     guerdarProducto() {
       this.guardando = true;
+
       let imageRef = storage.child(this.imageProduct.name);
-      imageRef.put(this.imageProduct).them(async imageRef => {
-        this.form.imagen = await imageRes.ref.getDownLoadURL();
-        db.collection("productos").add(this.form).then(res => {
+
+      imageRef.put(this.imageProduct).then(async imageRes => {
+       console.log(imageRes)
+        this.form.imagen = await imageRes.ref.getDownloadURL();
+
+        db.collection("productos")
+        .add(this.form)
+        .then(res => {
             this.$router.push({
               path: "/producto"
             });
