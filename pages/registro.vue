@@ -69,10 +69,20 @@ export default {
       auth
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then(res => {
-          alert("Registro Exitoso");
-        }).catch(error=>{
-            alert("Pailas error" + error.message)
+          console.log(form.name);
+          res.user
+            .updateProfile({
+              displayName: this.form.name
+            })
+            .then(resUpdate => {
+              this.$router.push({
+                path: "/"
+              });
+            });
         })
+        .catch(error => {
+          alert("Pailas perro error  -- " + error.message);
+        });
     }
   }
 };
